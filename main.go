@@ -43,7 +43,13 @@ func emailRequestHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Invalid email request (%s)\n", err)))
 		return
 	}
+
 	err = emailService.SendEmail(sendReq)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		w.Write([]byte(fmt.Sprintf("Error from email provider (%s)\n", err)))
+		return
+	}
 }
 
 func main() {
