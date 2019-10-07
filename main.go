@@ -67,6 +67,7 @@ func main() {
 		// Use our EmailService to attempt to send the email
 		err = emailService.SendEmail(sendReq)
 		if err != nil {
+			log.Printf("!!!Error sending email to %s: %s", sendReq.To, err)
 			w.WriteHeader(http.StatusBadGateway)
 			w.Write([]byte(fmt.Sprintf("Error from email provider: %s\n", err)))
 			return
