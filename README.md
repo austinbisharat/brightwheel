@@ -8,7 +8,7 @@ Very simple proxy email service to use either Mailgun or Sendgrid to send simple
 - optionally: `dep ensure`
 - run tests: `go test ./...`
 - Setup Sendgrid api key: `export SENDGRID_API_KEY=<your sendgrid api key>`
-- Setup Mailgun api key and domain `export MAILGUN_API_KEY=<your mailgun api key>` and `export MAILGUN_DOMAIN=<a domain registered with your mailgun account>"
+- Setup Mailgun api key and domain `export MAILGUN_API_KEY=<your mailgun api key>` and `export MAILGUN_DOMAIN=<a domain registered with your mailgun account>"`
 - Build with `go build`
 - Run the server with `./brightwheel --email_service=sendgrid` or `./brightwheel --email_service=mailgun`
 
