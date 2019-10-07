@@ -46,7 +46,7 @@ func NewSendgridEmailService() (EmailService, error) {
 }
 
 func (seg *sendgridEmailService) SendEmail(sendReq EmailSendRequest) error {
-	sendgridReq := genericRequestToSendGridRequest(sendReq)
+	sendgridReq := genericRequestToSendgridRequest(sendReq)
 	bodyBytes, err := json.Marshal(sendgridReq)
 	if err != nil {
 		return fmt.Errorf("could not marshall sendgrid request json: %s", err)
@@ -79,7 +79,7 @@ func (seg *sendgridEmailService) SendEmail(sendReq EmailSendRequest) error {
 	return nil
 }
 
-func genericRequestToSendGridRequest(sendReq EmailSendRequest) sendgridEmailRequest {
+func genericRequestToSendgridRequest(sendReq EmailSendRequest) sendgridEmailRequest {
 	return sendgridEmailRequest{
 		Personalizations: []sendgridPersonalization{
 			{

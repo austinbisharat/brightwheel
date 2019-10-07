@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 	"github.com/austinbisharat/brightwheel/emailservice"
 )
 
-// Represents that json that the /email endpoint recieves
+// Represents the json that the /email endpoint recieves
 type emailRequest struct {
 	To       string `json:"to"`
 	ToName   string `json:"to_name"`
@@ -20,18 +21,33 @@ type emailRequest struct {
 }
 
 func main() {
-	emailService, err := emailservice.NewSendgridEmailService()
+	var emailServiceName string
+	flag.StringVar(&emailServiceName, "email_service", "mailgun", "which email service to use")
+	flag.Parse()
+
+	var emailService emailservice.EmailService
+	var err error
+	if emailServiceName == "mailgun" {
+		emailService, err = emailservice.NewMailgunEmailService()
+	} else if emailServiceName == "sendgrid" {
+		emailService, err = emailservice.NewSendgridEmailService()
+	} else {
+		log.Fatalf("Unknown email service option (%s)", emailServiceName)
+	}
+
 	if err != nil {
 		log.Fatalf("Cannot create new email service (%s)", err)
 	}
 
 	emailRequestHandler := func(w http.ResponseWriter, r *http.Request) {
+		// Disallow anything other than posts
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		decoder := json.NewDecoder(r.Body)
 
+		// Attempt to parse the body into emailRequest struct
+		decoder := json.NewDecoder(r.Body)
 		var emailRequest emailRequest
 		err := decoder.Decode(&emailRequest)
 		if err != nil {
@@ -40,6 +56,7 @@ func main() {
 			return
 		}
 
+		// Validate our input
 		sendReq, err := validateEmailRequest(emailRequest)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -47,10 +64,11 @@ func main() {
 			return
 		}
 
+		// Use our EmailService to attempt to send the email
 		err = emailService.SendEmail(sendReq)
 		if err != nil {
 			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(fmt.Sprintf("Error from email provider (%s)\n", err)))
+			w.Write([]byte(fmt.Sprintf("Error from email provider: %s\n", err)))
 			return
 		}
 	}
