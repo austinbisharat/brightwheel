@@ -17,9 +17,9 @@ This email service is a very simple go server. I chose to use go because I am fa
 
 - The external api layer: this is mostly contained in main.go and defines the handler for accepting POST requests. It is responsible for parsing incoming requests and passing them through the next two layers
 - The validation layer: this is mostly contained in validation.go and defines the application-level validation of incoming requests
-- The email service layer: this is contained in emailservice/ and defines the abstraction aboe both sendgrid and mailgun, as well as the implementations for each of those providers.
+- The email service layer: this is contained in emailservice/ and defines the abstraction above both sendgrid and mailgun, as well as the implementations for each of those providers.
 
-I chose to use an external package, bluemonday, to do HTML sanitization of email bodys. I figured that using a well-tested package to do the sanitization not only would make it more robust, but it's much more configurable. If we decide to allow certain types of of HTML tags, then we can easily use bluemonday's policy builder to construct whatever we want.
+I chose to use an external package, bluemonday, to do HTML sanitization of email bodys. I figured that using a well-tested package to do the sanitization not only would make it more robust, but also much more configurable. If we decide to allow certain types of of HTML tags, then we can easily use bluemonday's policy builder to construct whatever we want.
 
 There were a number of directions that I would have liked to take the project, but did not have time for:
 - Supporting some retry logic for failed requests to the email service
